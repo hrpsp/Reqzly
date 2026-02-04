@@ -56,3 +56,43 @@ export interface User {
   created_at: string;
   updated_at: string;
 }
+
+// Request types
+export type RequestType = 'credit_card' | 'loan';
+export type RequestStatus = 'pending' | 'verified' | 'completed' | 'cancelled';
+
+// Dashboard types
+export interface RequestTypeStats {
+  total: number;
+  pending: number;
+  verified: number;
+  completed: number;
+  today: number;
+}
+
+export interface DashboardStats {
+  today_requests: number;
+  pending_verifications: number;
+  completed_today: number;
+  monthly_total: number;
+  credit_card_stats: RequestTypeStats;
+  loan_stats: RequestTypeStats;
+}
+
+export interface RecentActivity {
+  id: number;
+  request_number: string;
+  type: RequestType;
+  type_label: string;
+  customer_name: string;
+  status: RequestStatus;
+  status_label: string;
+  status_color: string;
+  created_at: string;
+  created_at_human: string;
+}
+
+export interface DashboardData {
+  stats: DashboardStats;
+  recent_activity: RecentActivity[];
+}

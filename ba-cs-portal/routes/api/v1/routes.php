@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,5 +37,6 @@ Route::middleware(['auth:sanctum', 'role:admin,supervisor'])->prefix('management
 
 // All authenticated users routes
 Route::middleware('auth:sanctum')->group(function () {
-    // General authenticated routes will be added here
+    // Dashboard
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 });
