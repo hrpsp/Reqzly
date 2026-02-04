@@ -1,72 +1,32 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 // Layout components
 import MainLayout from '@/components/layout/MainLayout';
-import AuthLayout from '@/components/layout/AuthLayout';
+
+// Auth route guards
+import { ProtectedRoute, GuestRoute } from '@/components/auth';
 
 // Pages
 import Dashboard from '@/pages/Dashboard';
 import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
 
-// Protected route wrapper
-function ProtectedRoute() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
-}
-
-// Guest route wrapper (redirect if authenticated)
-function GuestRoute() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-      </div>
-    );
-  }
-
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return <Outlet />;
-}
-
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <Navigate to="/dashboard" replace />,
   },
+  // Guest routes (accessible only when not authenticated)
   {
     element: <GuestRoute />,
     children: [
       {
-        element: <AuthLayout />,
-        children: [
-          {
-            path: '/login',
-            element: <Login />,
-          },
-        ],
+        path: '/login',
+        element: <Login />,
       },
     ],
   },
+  // Protected routes (require authentication)
   {
     element: <ProtectedRoute />,
     children: [
@@ -81,6 +41,22 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Unauthorized page
+  {
+    path: '/unauthorized',
+    element: (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900">403</h1>
+          <p className="mt-2 text-lg text-gray-600">Access Denied</p>
+          <p className="mt-1 text-sm text-gray-500">
+            You don't have permission to access this resource.
+          </p>
+        </div>
+      </div>
+    ),
+  },
+  // 404 page
   {
     path: '*',
     element: <NotFound />,

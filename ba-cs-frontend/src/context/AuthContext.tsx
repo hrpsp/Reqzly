@@ -1,13 +1,15 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import type { User } from '@/types';
-import apiClient from '@/lib/axios';
+import { authApi, type LoginCredentials } from '@/api/auth';
+import toast from 'react-hot-toast';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (token: string, user: User) => void;
-  logout: () => void;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  logout: () => Promise<void>;
+  checkAuth: () => Promise<void>;
   setUser: (user: User | null) => void;
 }
 
@@ -21,31 +23,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const initAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const response = await apiClient.get<{ success: boolean; data: User }>('/user');
-          setUser(response.data.data);
-        } catch {
-          localStorage.removeItem('token');
-        }
-      }
+  const checkAuth = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUser(null);
       setIsLoading(false);
-    };
+      return;
+    }
 
-    initAuth();
+    try {
+      const response = await authApi.getMe();
+      setUser(response.data);
+    } catch {
+      localStorage.removeItem('token');
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const login = (token: string, userData: User) => {
-    localStorage.setItem('token', token);
-    setUser(userData);
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  const login = async (credentials: LoginCredentials) => {
+    const response = await authApi.login(credentials);
+    localStorage.setItem('token', response.data.token);
+    setUser(response.data.user);
+    toast.success(response.message || 'Login successful');
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
+  const logout = async () => {
+    try {
+      await authApi.logout();
+      toast.success('Logged out successfully');
+    } catch {
+      // Even if logout fails on server, clear local state
+    } finally {
+      localStorage.removeItem('token');
+      setUser(null);
+    }
   };
 
   return (
@@ -56,6 +73,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isAuthenticated: !!user,
         login,
         logout,
+        checkAuth,
         setUser,
       }}
     >

@@ -28,11 +28,31 @@ export interface PaginatedResponse<T> {
   };
 }
 
+export type UserRole = 'admin' | 'supervisor' | 'staff';
+
+export interface UserSupervisor {
+  id: number;
+  employee_code: string;
+  employee_name: string;
+  designation: string;
+  email: string;
+}
+
 export interface User {
   id: number;
-  name: string;
+  employee_code: string;
+  employee_name: string;
+  designation: string;
+  department: string;
+  region: string;
+  mobile_number: string;
   email: string;
+  role: UserRole;
+  role_label: string;
+  picture: string | null;
+  is_active: boolean;
   email_verified_at: string | null;
+  supervisor: UserSupervisor | null;
   created_at: string;
   updated_at: string;
 }
