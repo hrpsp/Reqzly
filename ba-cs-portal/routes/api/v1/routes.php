@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Public routes
+// Health check
 Route::get('/health', function () {
     return response()->json([
         'success' => true,
@@ -22,9 +21,20 @@ Route::get('/health', function () {
     ]);
 });
 
-// Protected routes
+// Authentication routes
+require __DIR__.'/auth.php';
+
+// Admin only routes
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
+    // Admin routes will be added here
+});
+
+// Supervisor and Admin routes
+Route::middleware(['auth:sanctum', 'role:admin,supervisor'])->prefix('management')->group(function () {
+    // Management routes will be added here
+});
+
+// All authenticated users routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    // General authenticated routes will be added here
 });
