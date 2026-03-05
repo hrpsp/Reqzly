@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\CreditCardRequestController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +40,9 @@ Route::middleware(['auth:sanctum', 'role:admin,supervisor'])->prefix('management
 Route::middleware('auth:sanctum')->group(function () {
     // Dashboard
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+
+    // Credit Card Requests
+    // export must be registered before the resource route to avoid {id} catching "export"
+    Route::get('/credit-card-requests/export', [CreditCardRequestController::class, 'export']);
+    Route::apiResource('/credit-card-requests', CreditCardRequestController::class);
 });

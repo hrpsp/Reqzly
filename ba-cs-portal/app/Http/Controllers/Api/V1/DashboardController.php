@@ -29,7 +29,7 @@ class DashboardController extends Controller
         $stats = $this->dashboardService->getStats($user);
         $recentActivity = $this->dashboardService->getRecentActivity($user);
 
-        return $this->successResponse([
+        return $this->success([
             'stats' => $stats,
             'recent_activity' => $recentActivity,
         ], 'Dashboard data retrieved successfully');

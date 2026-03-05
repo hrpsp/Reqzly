@@ -113,13 +113,13 @@ class CreditCardRequestService
     public function update(CreditCardRequest $request, array $data): CreditCardRequest
     {
         // Don't allow updates to completed or cancelled requests
-        if (in_array($request->status, [RequestStatus::COMPLETED, RequestStatus::CANCELLED])) {
+        if ($request->status === RequestStatus::COMPLETED || $request->status === RequestStatus::CANCELLED) {
             throw new \InvalidArgumentException('Cannot update a completed or cancelled request.');
         }
 
         $request->update($data);
 
-        return $request->fresh(['branch', 'creator']);
+        return $request->fresh(['branch', 'creator']) ?? $request;
     }
 
     /**
