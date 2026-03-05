@@ -15,6 +15,7 @@ import Dashboard from '@/pages/Dashboard';
 
 // Pages – credit card
 import CreditCardRequestForm from '@/pages/credit-card/CreditCardRequestForm';
+import CreditCardRequestList from '@/pages/credit-card/CreditCardRequestList';
 
 export const router = createBrowserRouter([
   {
@@ -49,8 +50,7 @@ export const router = createBrowserRouter([
             path: '/credit-card/:id/edit',
             element: <CreditCardRequestForm mode="edit" />,
           },
-          // List + detail pages are placeholders until implemented
-          { path: '/credit-card/list', element: <Navigate to="/credit-card/new" replace /> },
+          { path: '/credit-card/list', element: <CreditCardRequestList /> },
           { path: '/credit-card/:id',  element: <Navigate to="/credit-card/list" replace /> },
 
           // Loan Requests (stubs)

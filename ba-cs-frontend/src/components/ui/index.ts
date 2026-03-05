@@ -5,6 +5,11 @@ export { default as Select } from './Select';
 export { default as Spinner } from './Spinner';
 export { default as Textarea } from './Textarea';
 export { default as FormField } from './FormField';
+export { default as Badge } from './Badge';
+export { default as SearchInput } from './SearchInput';
+export { default as Pagination } from './Pagination';
+export { default as DateRangePicker } from './DateRangePicker';
+export { default as DataTable } from './DataTable';
 export { Card, CardHeader, CardContent, CardFooter } from './Card';
 
 export type { ButtonProps } from './Button';
@@ -12,3 +17,5 @@ export type { InputProps } from './Input';
 export type { LabelProps } from './Label';
 export type { SelectProps } from './Select';
 export type { TextareaProps } from './Textarea';
+export type { BadgeVariant } from './Badge';
+export type { Column } from './DataTable';
